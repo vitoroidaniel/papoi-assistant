@@ -1,3 +1,4 @@
 FROM nginx:alpine
 COPY papoi-assistant.html /usr/share/nginx/html/index.html
-EXPOSE 80
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 8080
