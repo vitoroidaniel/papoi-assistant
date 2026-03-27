@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Papoi Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.383.0/dist/umd/lucide.min.js"></script>
+<style>
+:root {
+  --sky: #E8F4FD;
+  --sky2: #D0E8F9;
+  --blue: #4BA3E3;
+  --blue-dark: #2D7EC4;
+  --blue-deep: #1A5FA0;
+  --mint: #E6F7F2;
+  --mint2: #B8EDD9;
+  --teal: #38C9A0;
+  --teal-dark: #25A882;
+  --peach: #FEF0E8;
+  --peach2: #FDDCC8;
+  --coral: #F47C5A;
+  --lemon: #FEFAE8;
+  --lemon2: #FDF0B0;
+  --white: #FFFFFF;
+  --bg: #F5F8FC;
+  --surface: #FFFFFF;
+  --surface2: #F0F5FB;
+  --border: #E2EAF4;
+  --border2: #C8D8ED;
+  --text: #1A2740;
+  --text2: #3D5275;
+  --text3: #6B82A0;
+  --text4: #9BAEC5;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+  --shadow: 0 2px 16px rgba(74,128,200,0.10);
+  --shadow-md: 0 4px 32px rgba(74,128,200,0.14);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+h1,h2,h3,h4 { font-family: 'Sora', sans-serif; }
+
+.page { display: none; min-height: 100vh; }
+.page.active { display: flex; flex-direction: column; }
+
+/* ── LANDING ── */
+#page-landing { background: var(--white); position: relative; overflow: hidden; }
+
+.blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.5; pointer-events: none; z-index: 0; }
+.blob-1 { width: 520px; height: 520px; background: #C5E5FF; top: -140px; left: -120px; }
+.blob-2 { width: 420px; height: 420px; background: #A8EED8; top: 180px; right: -100px; }
+.blob-3 { width: 320px; height: 320px; background: #FDF0B0; bottom: 80px; left: 35%; }
+
+.landing-nav {
+  position: relative; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.25rem 3rem;
+  border-bottom: 1px solid rgba(226,234,244,0.8);
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(14px);
+}
+
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand-logo {
+  width: 38px; height: 38px; background: var(--blue); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+}
+.brand-logo-eye {
+  width: 22px; height: 22px; background: white; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.brand-logo-eye::after { content: ''; width: 9px; height: 9px; background: var(--blue-deep); border-radius: 50%; display: block; }
+.brand-name { font-family: 'Sora', sans-serif; font-size: 19px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
+.brand-name em { color: var(--blue); font-style: normal; }
+.nav-chip { background: var(--sky); color: var(--blue-dark); font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 99px; border: 1px solid var(--sky2); }
+
+.hero {
+  position: relative; z-index: 5; flex: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 5rem 2rem 3.5rem;
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--mint); color: var(--teal-dark);
+  font-size: 13px; font-weight: 600;
+  padding: 6px 16px; border-radius: 99px; margin-bottom: 1.75rem;
+  border: 1px solid var(--mint2);
+  animation: fadeUp 0.5s ease both;
+}
+.hero h1 {
+  font-size: clamp(34px, 5.5vw, 64px); font-weight: 800; line-height: 1.1;
+  letter-spacing: -1.5px; color: var(--text); max-width: 740px;
+  margin-bottom: 1.25rem; animation: fadeUp 0.5s 0.1s ease both;
+}
+.hero h1 .ac { color: var(--blue); }
+.hero h1 .ac2 { color: var(--teal-dark); }
+.hero-sub {
+  font-size: 17px; color: var(--text3); max-width: 500px; line-height: 1.75;
+  margin-bottom: 2.5rem; animation: fadeUp 0.5s 0.2s ease both;
+}
+.hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: center; animation: fadeUp 0.5s 0.3s ease both; }
+
+.btn-hero {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 28px; border-radius: 12px;
+  font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700;
+  cursor: pointer; border: none; transition: all 0.18s; text-decoration: none;
+}
+.btn-hero:active { transform: scale(0.97); }
+.btn-hero-primary { background: var(--blue); color: white; box-shadow: 0 4px 20px rgba(75,163,227,0.35); }
+.btn-hero-primary:hover { background: var(--blue-dark); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(75,163,227,0.4); }
+.btn-hero-ghost { background: var(--surface); color: var(--text2); border: 1.5px solid var(--border2); }
+.btn-hero-ghost:hover { background: var(--sky); border-color: var(--blue); color: var(--blue-dark); }
+
+.features {
+  position: relative; z-index: 5;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px; padding: 0 3rem 4rem;
+  max-width: 960px; margin: 0 auto; width: 100%;
+  animation: fadeUp 0.5s 0.4s ease both;
+}
+.feat-card {
+  background: rgba(255,255,255,0.7); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.25rem;
+  backdrop-filter: blur(8px); transition: all 0.2s;
+}
+.feat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.feat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+.fi-blue { background: var(--sky); color: var(--blue); }
+.fi-teal { background: var(--mint); color: var(--teal-dark); }
+.fi-peach { background: var(--peach); color: var(--coral); }
+.fi-lemon { background: var(--lemon); color: #9A8000; }
+.feat-card h3 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.feat-card p { font-size: 13px; color: var(--text3); line-height: 1.5; }
+
+/* ── APP ── */
+#page-app { background: var(--bg); }
+
+.app-header {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem; height: 58px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 50;
+  box-shadow: 0 1px 8px rgba(74,128,200,0.06);
+}
+.app-left { display: flex; align-items: center; gap: 12px; }
+.back-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 12px; border-radius: var(--radius-xs);
+  border: 1px solid var(--border); background: transparent;
+  color: var(--text3); font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s;
+}
+.back-btn:hover { background: var(--sky); color: var(--blue-dark); border-color: var(--blue); }
+.app-brand { display: flex; align-items: center; gap: 8px; }
+.app-logo {
+  width: 30px; height: 30px; background: var(--blue); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.app-logo-eye { width: 17px; height: 17px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.app-logo-eye::after { content: ''; width: 7px; height: 7px; background: var(--blue-deep); border-radius: 50%; display: block; }
+.app-brand-name { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); }
+.app-label { font-size: 12px; color: var(--text4); font-weight: 500; }
+
+.api-bar {
+  background: var(--sky); border-bottom: 1px solid var(--sky2);
+  padding: 8px 1.5rem; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.api-bar label { font-size: 12px; font-weight: 600; color: var(--blue-dark); display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+.api-bar input {
+  flex: 1; min-width: 180px; background: white;
+  border: 1px solid var(--border2); border-radius: var(--radius-xs);
+  color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px;
+  padding: 6px 10px; outline: none; transition: border-color 0.15s;
+}
+.api-bar input:focus { border-color: var(--blue); }
+.api-status {
+  font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 99px;
+  background: white; color: var(--text4); border: 1px solid var(--border); white-space: nowrap;
+}
+.api-status.ok { background: var(--mint); color: var(--teal-dark); border-color: var(--mint2); }
+.api-status.err { background: #FEE8E8; color: #C0392B; border-color: #FAC5C5; }
+
+.app-layout { display: grid; grid-template-columns: 232px 1fr; flex: 1; min-height: 0; }
+
+.sidebar {
+  background: var(--white); border-right: 1px solid var(--border);
+  padding: 1.25rem 0; position: sticky; top: 106px;
+  height: calc(100vh - 106px); overflow-y: auto;
+  display: flex; flex-direction: column;
+}
+.sb-section {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text4);
+  padding: 0 1.25rem 6px; margin-top: 1.25rem;
+}
+.sb-section:first-child { margin-top: 0; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; padding: 9px 1.25rem;
+  background: none; border: none; border-left: 3px solid transparent;
+  color: var(--text3); font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 500; cursor: pointer;
+  text-align: left; transition: all 0.15s;
+}
+.nav-item:hover { color: var(--text); background: var(--bg); }
+.nav-item.active { color: var(--blue-dark); background: var(--sky); border-left-color: var(--blue); font-weight: 600; }
+.nav-icon-w {
+  width: 30px; height: 30px; border-radius: var(--radius-xs);
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface2); flex-shrink: 0; color: var(--text3); transition: all 0.15s;
+}
+.nav-item.active .nav-icon-w { background: var(--blue); color: white; }
+.sb-footer {
+  margin-top: auto; padding: 1rem 1.25rem;
+  border-top: 1px solid var(--border);
+  font-size: 12px; color: var(--text4);
+  display: flex; align-items: center; gap: 6px;
+}
+
+.main-content { padding: 1.75rem; overflow-y: auto; }
+.panel { display: none; }
+.panel.active { display: block; }
+.panel-title { margin-bottom: 1.5rem; }
+.panel-title h2 { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+.panel-title p { font-size: 14px; color: var(--text3); margin-top: 3px; }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; box-shadow: var(--shadow); }
+
+.field { margin-bottom: 1rem; }
+.field label { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+textarea, select, input[type="text"] {
+  width: 100%; background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 14px;
+  padding: 10px 12px; outline: none; transition: border-color 0.15s, box-shadow 0.15s; line-height: 1.6;
+}
+textarea { resize: vertical; min-height: 100px; }
+textarea:focus, select:focus, input[type="text"]:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(75,163,227,0.12); background: white; }
+select option { background: white; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 18px; border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+  cursor: pointer; border: none; transition: all 0.15s;
+}
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+.btn-primary { background: var(--blue); color: white; box-shadow: 0 2px 10px rgba(75,163,227,0.3); }
+.btn-primary:hover:not(:disabled) { background: var(--blue-dark); }
+.btn-ghost { background: transparent; color: var(--text3); border: 1.5px solid var(--border); }
+.btn-ghost:hover { color: var(--text); background: var(--surface2); border-color: var(--border2); }
+.btn-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 0.75rem; }
+
+.tpl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 8px; margin-bottom: 1.25rem; }
+.tpl-chip {
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 12px;
+  cursor: pointer; text-align: left; font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+}
+.tpl-chip:hover { border-color: var(--blue); background: var(--sky); }
+.tpl-chip.sel { border-color: var(--blue); background: var(--sky); }
+.tpl-chip strong { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.tpl-chip span { font-size: 11px; color: var(--text3); }
+
+.tone-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+.tone-pill {
+  padding: 6px 14px; border-radius: 99px; border: 1.5px solid var(--border);
+  background: var(--surface2); color: var(--text3);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s;
+}
+.tone-pill:hover { border-color: var(--blue); color: var(--blue-dark); background: var(--sky); }
+.tone-pill.sel { background: var(--blue); color: white; border-color: var(--blue); font-weight: 600; }
+
+.result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.result-header span { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text3); display: flex; align-items: center; gap: 5px; }
+.copy-btn {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 99px;
+  border: 1px solid var(--border); background: transparent; color: var(--text3);
+  cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+}
+.copy-btn:hover { border-color: var(--teal); color: var(--teal-dark); background: var(--mint); }
+.result-box {
+  background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  padding: 14px; font-size: 14px; line-height: 1.8; color: var(--text);
+  min-height: 80px; white-space: pre-wrap; word-break: break-word;
+}
+.result-box.idle { color: var(--text4); font-style: italic; }
+.result-box.loading { color: var(--text3); font-style: italic; }
+hr.div { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
+
+/* ── CHAT ── */
+.chat-wrap { display: flex; flex-direction: column; height: calc(100vh - 210px); min-height: 480px; }
+.chat-messages {
+  flex: 1; overflow-y: auto; padding: 1.25rem;
+  display: flex; flex-direction: column; gap: 14px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.msg { display: flex; gap: 10px; align-items: flex-end; max-width: 82%; animation: msgIn 0.2s ease; }
+.msg.user { align-self: flex-end; flex-direction: row-reverse; }
+@keyframes msgIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+.msg-avatar { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.msg.ai .msg-avatar { background: var(--blue); }
+.msg.user .msg-avatar { background: var(--teal); }
+.msg-av-eye { width: 18px; height: 18px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.msg-av-eye::after { content: ''; width: 7px; height: 7px; background: var(--blue-deep); border-radius: 50%; display: block; }
+.msg-bubble { padding: 11px 15px; border-radius: 14px; font-size: 14px; line-height: 1.7; }
+.msg.ai .msg-bubble { background: var(--white); color: var(--text); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+.msg.user .msg-bubble { background: var(--blue); color: white; border-bottom-right-radius: 4px; }
+.msg.ai.loading .msg-bubble { color: var(--text3); font-style: italic; }
+
+.quick-prompts {
+  background: var(--white); border: 1px solid var(--border); border-top: none; border-bottom: none;
+  padding: 0.6rem 1rem; display: flex; gap: 8px; flex-wrap: wrap;
+}
+.qp-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 12px; border-radius: 99px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--text3);
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: all 0.15s; white-space: nowrap;
+}
+.qp-btn:hover { border-color: var(--blue); color: var(--blue-dark); background: var(--sky); }
+
+.chat-input-area {
+  background: var(--white); border: 1px solid var(--border); border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 1rem; display: flex; gap: 10px; align-items: flex-end;
+}
+.chat-input-area textarea { flex: 1; min-height: 46px; max-height: 120px; resize: none; }
+.send-btn {
+  width: 44px; height: 44px; border-radius: var(--radius-sm);
+  background: var(--blue); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: white; flex-shrink: 0; transition: all 0.15s;
+}
+.send-btn:hover { background: var(--blue-dark); }
+.send-btn:active { transform: scale(0.95); }
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:none; } }
+
+@media (max-width: 680px) {
+  .landing-nav { padding: 1rem 1.25rem; }
+  .features { padding: 0 1.25rem 3rem; }
+  .app-layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; flex-direction: row; overflow-x: auto; padding: 0.5rem 0; border-right: none; border-bottom: 1px solid var(--border); }
+  .sb-section, .sb-footer { display: none; }
+  .nav-item { padding: 8px 12px; border-left: none; border-bottom: 3px solid transparent; white-space: nowrap; font-size: 13px; }
+  .nav-item.active { border-left: none; border-bottom-color: var(--blue); }
+  .main-content { padding: 1rem; }
+  .row2 { grid-template-columns: 1fr; }
+  .chat-wrap { height: calc(100vh - 260px); }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LANDING ══ -->
+<div id="page-landing" class="page active">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <nav class="landing-nav">
+    <div class="brand">
+      <div class="brand-logo"><div class="brand-logo-eye"></div></div>
+      <div class="brand-name">Papoi <em>Assistant</em></div>
+    </div>
+    <div class="nav-chip">Freight &amp; Dispatch</div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-badge">
+      <i data-lucide="truck" style="width:14px;height:14px;"></i>
+      Built for dispatchers &amp; brokers
+    </div>
+    <h1>Your <span class="ac">AI co-pilot</span><br>for freight <span class="ac2">comms</span></h1>
+    <p class="hero-sub">Write load offers, rephrase messages, adjust tone, and translate — all in seconds. Powered by Claude AI.</p>
+    <div class="hero-actions">
+      <button class="btn-hero btn-hero-primary" onclick="launchApp()">
+        <i data-lucide="zap" style="width:16px;height:16px;"></i>
+        Get started
+      </button>
+      <button class="btn-hero btn-hero-ghost" onclick="launchApp()">
+        <i data-lucide="message-circle" style="width:16px;height:16px;"></i>
+        Try the chat
+      </button>
+    </div>
+  </section>
+
+  <div class="features">
+    <div class="feat-card">
+      <div class="feat-icon fi-blue"><i data-lucide="message-circle" style="width:18px;height:18px;"></i></div>
+      <h3>AI Chat</h3>
+      <p>Ask anything — rate disputes, difficult shippers, regulations, negotiations.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon fi-teal"><i data-lucide="file-text" style="width:18px;height:18px;"></i></div>
+      <h3>Templates</h3>
+      <p>Load offers, rate confirms, POD requests, detention notices — instantly.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon fi-peach"><i data-lucide="wand-2" style="width:18px;height:18px;"></i></div>
+      <h3>Rephrase</h3>
+      <p>Turn rough messages into polished, professional communication.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon fi-lemon"><i data-lucide="languages" style="width:18px;height:18px;"></i></div>
+      <h3>Translate</h3>
+      <p>12 languages with freight terminology preserved for global ops.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="page-app" class="page">
+  <header class="app-header">
+    <div class="app-left">
+      <button class="back-btn" onclick="goHome()">
+        <i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Back
+      </button>
+      <div class="app-brand">
+        <div class="app-logo"><div class="app-logo-eye"></div></div>
+        <div class="app-brand-name">Papoi</div>
+      </div>
+    </div>
+    <div class="app-label">Freight Assistant</div>
+  </header>
+
+  <div class="api-bar">
+    <label><i data-lucide="key" style="width:13px;height:13px;"></i> API Key</label>
+    <input type="password" id="api-key-input" placeholder="sk-ant-api03-..." oninput="checkKey()">
+    <div id="api-status" class="api-status">Not set</div>
+  </div>
+
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sb-section">Main</div>
+      <button class="nav-item active" onclick="showPanel('chat',this)">
+        <div class="nav-icon-w"><i data-lucide="message-circle" style="width:15px;height:15px;"></i></div>
+        AI Chat
+      </button>
+      <div class="sb-section">Tools</div>
+      <button class="nav-item" onclick="showPanel('templates',this)">
+        <div class="nav-icon-w"><i data-lucide="file-text" style="width:15px;height:15px;"></i></div>
+        Templates
+      </button>
+      <button class="nav-item" onclick="showPanel('rephrase',this)">
+        <div class="nav-icon-w"><i data-lucide="wand-2" style="width:15px;height:15px;"></i></div>
+        Rephrase
+      </button>
+      <button class="nav-item" onclick="showPanel('tone',this)">
+        <div class="nav-icon-w"><i data-lucide="sliders-horizontal" style="width:15px;height:15px;"></i></div>
+        Tone Adjust
+      </button>
+      <button class="nav-item" onclick="showPanel('translate',this)">
+        <div class="nav-icon-w"><i data-lucide="languages" style="width:15px;height:15px;"></i></div>
+        Translate
+      </button>
+      <div class="sb-footer">
+        <i data-lucide="zap" style="width:13px;height:13px;color:var(--blue);"></i>
+        Powered by Claude AI
+      </div>
+    </aside>
+
+    <main class="main-content">
+
+      <!-- CHAT -->
+      <div id="panel-chat" class="panel active">
+        <div class="panel-title">
+          <h2>AI Chat</h2>
+          <p>Your freight co-pilot — ask anything about loads, carriers, rates, and comms.</p>
+        </div>
+        <div class="chat-wrap">
+          <div class="chat-messages" id="chat-area">
+            <div class="msg ai">
+              <div class="msg-avatar"><div class="msg-av-eye"></div></div>
+              <div class="msg-bubble">Bello! I'm Papoi, your freight dispatch assistant. Ask me to write a message, help with a tricky carrier situation, explain detention rules, or anything else you need today.</div>
+            </div>
+          </div>
+          <div class="quick-prompts" id="qps">
+            <button class="qp-btn" onclick="quickPrompt('Write a load offer for a flatbed load going Chicago to Dallas at $2.80/mile')"><i data-lucide="truck" style="width:12px;height:12px;"></i> Load offer</button>
+            <button class="qp-btn" onclick="quickPrompt('How do I handle a carrier demanding more money after rate confirmation?')"><i data-lucide="dollar-sign" style="width:12px;height:12px;"></i> Rate dispute</button>
+            <button class="qp-btn" onclick="quickPrompt('Write a professional check call message asking a driver for a location and ETA update')"><i data-lucide="map-pin" style="width:12px;height:12px;"></i> Check call</button>
+            <button class="qp-btn" onclick="quickPrompt('How do I properly claim detention time from a shipper?')"><i data-lucide="clock" style="width:12px;height:12px;"></i> Detention</button>
+          </div>
+          <div class="chat-input-area">
+            <textarea id="chat-input" placeholder="Ask Papoi anything..." onkeydown="chatEnter(event)" rows="1"></textarea>
+            <button class="send-btn" onclick="sendChat()">
+              <i data-lucide="send" style="width:16px;height:16px;"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEMPLATES -->
+      <div id="panel-templates" class="panel">
+        <div class="panel-title"><h2>Message templates</h2><p>Pick a type, fill in details, get a ready-to-send message.</p></div>
+        <div class="card">
+          <div class="field">
+            <label><i data-lucide="layout-grid" style="width:12px;height:12px;"></i> Quick pick</label>
+            <div class="tpl-grid">
+              <button class="tpl-chip" onclick="pickTpl(this,'Load offer email to a carrier for a new freight load')"><strong>Load offer</strong><span>New load to carrier</span></button>
+              <button class="tpl-chip" onclick="pickTpl(this,'Rate confirmation message confirming the agreed rate and load details')"><strong>Rate confirm</strong><span>Lock in the rate</span></button>
+              <button class="tpl-chip" onclick="pickTpl(this,'Pickup delay notification to shipper or carrier')"><strong>Pickup delay</strong><span>Notify of delay</span></button>
+              <button class="tpl-chip" onclick="pickTpl(this,'Check call message to driver asking for location and status update')"><strong>Check call</strong><span>Driver update</span></button>
+              <button class="tpl-chip" onclick="pickTpl(this,'Proof of delivery (POD) request after delivery completion')"><strong>POD request</strong><span>Get the docs</span></button>
+              <button class="tpl-chip" onclick="pickTpl(this,'Detention time notice informing of detention charges')"><strong>Detention</strong><span>Detention claim</span></button>
+              <button class="tpl-chip" onclick="pickTpl(this,'Broker introduction email to a new carrier')"><strong>Intro email</strong><span>New carrier</span></button>
+              <button class="tpl-chip" onclick="pickTpl(this,'Follow-up message after no response from carrier or shipper')"><strong>Follow-up</strong><span>No response</span></button>
+            </div>
+          </div>
+          <hr class="div">
+          <div class="row2">
+            <div class="field"><label><i data-lucide="hash" style="width:12px;height:12px;"></i> Load / ref #</label><input type="text" id="t-load" placeholder="e.g. LD-20483"></div>
+            <div class="field"><label><i data-lucide="user" style="width:12px;height:12px;"></i> Carrier / driver</label><input type="text" id="t-carrier" placeholder="e.g. Mike / Green Hauling LLC"></div>
+          </div>
+          <div class="field"><label><i data-lucide="info" style="width:12px;height:12px;"></i> Extra details</label><textarea id="t-details" placeholder="Origin, destination, dates, rate, special instructions..."></textarea></div>
+          <div class="field"><label><i data-lucide="type" style="width:12px;height:12px;"></i> Template type</label><input type="text" id="t-type" placeholder="Auto-filled above, or describe your own"></div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="generateTemplate()"><i data-lucide="sparkles" style="width:14px;height:14px;"></i> Generate</button>
+            <button class="btn btn-ghost" onclick="clearTpl()">Clear</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="result-header"><span><i data-lucide="file-output" style="width:13px;height:13px;"></i> Result</span><button class="copy-btn" onclick="copyRes('t-result')"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copy</button></div>
+          <div class="result-box idle" id="t-result">Your generated template will appear here...</div>
+        </div>
+      </div>
+
+      <!-- REPHRASE -->
+      <div id="panel-rephrase" class="panel">
+        <div class="panel-title"><h2>Rephrase message</h2><p>Paste any rough message — Papoi will clean it up.</p></div>
+        <div class="card">
+          <div class="field"><label><i data-lucide="pencil" style="width:12px;height:12px;"></i> Original message</label><textarea id="r-input" placeholder="e.g. hey driver where u at?? need update asap"></textarea></div>
+          <div class="field">
+            <label><i data-lucide="target" style="width:12px;height:12px;"></i> Goal</label>
+            <select id="r-goal">
+              <option value="professional">Make it professional and clear</option>
+              <option value="concise">Make it shorter and to the point</option>
+              <option value="firm">Make it firm but respectful</option>
+              <option value="friendly">Make it friendly and approachable</option>
+              <option value="urgent">Add urgency without being aggressive</option>
+              <option value="apologetic">Make it apologetic and understanding</option>
+            </select>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="rephraseMsg()"><i data-lucide="wand-2" style="width:14px;height:14px;"></i> Rephrase</button>
+            <button class="btn btn-ghost" onclick="document.getElementById('r-input').value=''">Clear</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="result-header"><span><i data-lucide="check-circle" style="width:13px;height:13px;"></i> Rephrased</span><button class="copy-btn" onclick="copyRes('r-result')"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copy</button></div>
+          <div class="result-box idle" id="r-result">Rephrased message will appear here...</div>
+        </div>
+      </div>
+
+      <!-- TONE -->
+      <div id="panel-tone" class="panel">
+        <div class="panel-title"><h2>Tone adjustment</h2><p>Same message, different energy — pick a tone and go.</p></div>
+        <div class="card">
+          <div class="field"><label><i data-lucide="message-square" style="width:12px;height:12px;"></i> Your message</label><textarea id="tone-input" placeholder="Paste your message here..."></textarea></div>
+          <div class="field">
+            <label><i data-lucide="sliders-horizontal" style="width:12px;height:12px;"></i> Target tone</label>
+            <div class="tone-row">
+              <button class="tone-pill sel" onclick="pickTone(this,'formal')">Formal</button>
+              <button class="tone-pill" onclick="pickTone(this,'casual')">Casual</button>
+              <button class="tone-pill" onclick="pickTone(this,'direct')">Direct</button>
+              <button class="tone-pill" onclick="pickTone(this,'assertive')">Assertive</button>
+              <button class="tone-pill" onclick="pickTone(this,'polite')">Polite</button>
+              <button class="tone-pill" onclick="pickTone(this,'empathetic')">Empathetic</button>
+              <button class="tone-pill" onclick="pickTone(this,'urgent')">Urgent</button>
+              <button class="tone-pill" onclick="pickTone(this,'confident')">Confident</button>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="adjustTone()"><i data-lucide="sparkles" style="width:14px;height:14px;"></i> Adjust tone</button>
+            <button class="btn btn-ghost" onclick="document.getElementById('tone-input').value=''">Clear</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="result-header"><span><i data-lucide="check-circle" style="width:13px;height:13px;"></i> Adjusted</span><button class="copy-btn" onclick="copyRes('tone-result')"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copy</button></div>
+          <div class="result-box idle" id="tone-result">Tone-adjusted message will appear here...</div>
+        </div>
+      </div>
+
+      <!-- TRANSLATE -->
+      <div id="panel-translate" class="panel">
+        <div class="panel-title"><h2>Translate message</h2><p>Communicate with any carrier in their language — freight terms preserved.</p></div>
+        <div class="card">
+          <div class="field"><label><i data-lucide="globe" style="width:12px;height:12px;"></i> Message to translate</label><textarea id="tr-input" placeholder="Paste your message in any language..."></textarea></div>
+          <div class="row2">
+            <div class="field"><label><i data-lucide="languages" style="width:12px;height:12px;"></i> Translate to</label>
+              <select id="tr-lang"><option>English</option><option>Spanish</option><option>Romanian</option><option>Russian</option><option>Ukrainian</option><option>Polish</option><option>Portuguese</option><option>French</option><option>German</option><option>Mandarin Chinese</option><option>Turkish</option><option>Arabic</option></select>
+            </div>
+            <div class="field"><label><i data-lucide="package" style="width:12px;height:12px;"></i> Freight terms</label>
+              <select id="tr-terms"><option value="yes">Keep industry terminology</option><option value="no">Simplify everything</option></select>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="translateMsg()"><i data-lucide="globe" style="width:14px;height:14px;"></i> Translate</button>
+            <button class="btn btn-ghost" onclick="document.getElementById('tr-input').value=''">Clear</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="result-header"><span><i data-lucide="check-circle" style="width:13px;height:13px;"></i> Translation</span><button class="copy-btn" onclick="copyRes('tr-result')"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copy</button></div>
+          <div class="result-box idle" id="tr-result">Translation will appear here...</div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+const SYS = `You are Papoi, a professional AI assistant for freight dispatchers and brokers. You specialize in freight trucking communication — load offers, rate confirmations, carrier relations, shipper communication, check calls, POD requests, detention notices, rate negotiations, and all aspects of trucking and logistics. Be concise, practical, and professional. When generating or rephrasing messages, return only the message text with no extra commentary.`;
+
+let API_KEY = '';
+let tone = 'formal';
+let chatHistory = [];
+
+function launchApp() {
+  document.getElementById('page-landing').classList.remove('active');
+  document.getElementById('page-app').classList.add('active');
+  lucide.createIcons();
+}
+
+function goHome() {
+  document.getElementById('page-app').classList.remove('active');
+  document.getElementById('page-landing').classList.add('active');
+  lucide.createIcons();
+}
+
+function checkKey() {
+  const k = document.getElementById('api-key-input').value.trim();
+  API_KEY = k;
+  const s = document.getElementById('api-status');
+  if (!k) { s.textContent = 'Not set'; s.className = 'api-status'; }
+  else if (k.startsWith('sk-ant-')) { s.textContent = 'Ready'; s.className = 'api-status ok'; }
+  else { s.textContent = 'Check format'; s.className = 'api-status err'; }
+}
+
+function showPanel(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function pickTpl(el, val) {
+  document.querySelectorAll('.tpl-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('t-type').value = val;
+}
+
+function pickTone(el, t) {
+  document.querySelectorAll('.tone-pill').forEach(p => p.classList.remove('sel'));
+  el.classList.add('sel');
+  tone = t;
+}
+
+function clearTpl() {
+  ['t-load','t-carrier','t-details','t-type'].forEach(id => document.getElementById(id).value = '');
+  document.querySelectorAll('.tpl-chip').forEach(c => c.classList.remove('sel'));
+  setRes('t-result','','idle','Your generated template will appear here...');
+}
+
+function setRes(id, txt, cls, ph) {
+  const el = document.getElementById(id);
+  el.className = 'result-box ' + (cls || '');
+  el.textContent = txt || ph || '';
+}
+
+async function callAPI(prompt, resultId) {
+  if (!API_KEY) { alert('Please enter your Claude API key at the top.'); return; }
+  setRes(resultId, 'Papoi is thinking...', 'loading');
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: SYS, messages: [{ role: 'user', content: prompt }] })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    setRes(resultId, (data.content||[]).map(b=>b.text||'').join(''), '');
+  } catch(e) { setRes(resultId, 'Error: ' + e.message, 'loading'); }
+}
+
+function generateTemplate() {
+  const type = document.getElementById('t-type').value.trim();
+  if (!type) { alert('Please pick or describe a template type.'); return; }
+  const load = document.getElementById('t-load').value.trim();
+  const carrier = document.getElementById('t-carrier').value.trim();
+  const details = document.getElementById('t-details').value.trim();
+  let p = `Write a professional freight dispatch message for: ${type}.`;
+  if (load) p += `\nLoad/Reference #: ${load}`;
+  if (carrier) p += `\nCarrier/Driver: ${carrier}`;
+  if (details) p += `\nDetails: ${details}`;
+  p += `\nReturn only the message, ready to send.`;
+  callAPI(p, 't-result');
+}
+
+function rephraseMsg() {
+  const msg = document.getElementById('r-input').value.trim();
+  if (!msg) { alert('Please enter a message to rephrase.'); return; }
+  const gm = { professional:'professional and clear for business communication', concise:'shorter and more concise while keeping all key information', firm:'firm and assertive but still respectful', friendly:'friendly and approachable while staying professional', urgent:'urgent in tone without being aggressive or rude', apologetic:'apologetic, understanding, and empathetic' };
+  callAPI(`Rephrase this freight dispatch message to make it ${gm[document.getElementById('r-goal').value]}:\n\n"${msg}"\n\nReturn only the rephrased message.`, 'r-result');
+}
+
+function adjustTone() {
+  const msg = document.getElementById('tone-input').value.trim();
+  if (!msg) { alert('Please enter a message.'); return; }
+  callAPI(`Rewrite this freight dispatch message with a ${tone} tone:\n\n"${msg}"\n\nReturn only the rewritten message.`, 'tone-result');
+}
+
+function translateMsg() {
+  const msg = document.getElementById('tr-input').value.trim();
+  if (!msg) { alert('Please enter a message to translate.'); return; }
+  const lang = document.getElementById('tr-lang').value;
+  const terms = document.getElementById('tr-terms').value === 'yes' ? 'Keep freight and logistics industry terminology as standard industry terms.' : 'Simplify all terminology for general understanding.';
+  callAPI(`Translate this message to ${lang}. ${terms}\n\n"${msg}"\n\nReturn only the translation.`, 'tr-result');
+}
+
+function copyRes(id) {
+  navigator.clipboard.writeText(document.getElementById(id).textContent).catch(()=>{});
+  const btn = event.currentTarget;
+  const orig = btn.innerHTML;
+  btn.innerHTML = '<i data-lucide="check" style="width:12px;height:12px;"></i> Copied!';
+  lucide.createIcons();
+  setTimeout(() => { btn.innerHTML = orig; lucide.createIcons(); }, 1500);
+}
+
+function quickPrompt(txt) {
+  document.getElementById('chat-input').value = txt;
+  sendChat();
+}
+
+function chatEnter(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
+
+async function sendChat() {
+  if (!API_KEY) { alert('Please enter your Claude API key at the top.'); return; }
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  const area = document.getElementById('chat-area');
+
+  const uEl = document.createElement('div');
+  uEl.className = 'msg user';
+  uEl.innerHTML = `<div class="msg-avatar" style="background:var(--teal);"><i data-lucide="user" style="width:14px;height:14px;color:white;"></i></div><div class="msg-bubble">${msg.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</div>`;
+  area.appendChild(uEl);
+  lucide.createIcons();
+
+  const aEl = document.createElement('div');
+  aEl.className = 'msg ai loading';
+  aEl.innerHTML = `<div class="msg-avatar"><div class="msg-av-eye"></div></div><div class="msg-bubble">Papoi is thinking...</div>`;
+  area.appendChild(aEl);
+  area.scrollTop = area.scrollHeight;
+
+  chatHistory.push({ role: 'user', content: msg });
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: SYS, messages: chatHistory })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const text = (data.content||[]).map(b=>b.text||'').join('');
+    aEl.querySelector('.msg-bubble').textContent = text;
+    aEl.classList.remove('loading');
+    chatHistory.push({ role: 'assistant', content: text });
+  } catch(e) {
+    aEl.querySelector('.msg-bubble').textContent = 'Error: ' + e.message;
+    aEl.classList.remove('loading');
+  }
+  area.scrollTop = area.scrollHeight;
+
+  if (chatHistory.length >= 4) document.getElementById('qps').style.display = 'none';
+}
+
+window.addEventListener('load', () => lucide.createIcons());
+</script>
+</body>
+</html>
