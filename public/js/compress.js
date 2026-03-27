@@ -1,22 +1,20 @@
 /* ═══════════════════════════════════════════════════════════════
-   PAOPOI — compress.js
-   Image compressor: drag-drop, quality, format, batch
+   PAOPOI v3 — compress.js
 ═══════════════════════════════════════════════════════════════ */
 
 const Compress = (() => {
-  const dropZone     = document.getElementById('img-drop-zone');
-  const input        = document.getElementById('img-input');
-  const qualSlider   = document.getElementById('quality-slider');
-  const qualVal      = document.getElementById('quality-val');
-  const maxWidthIn   = document.getElementById('max-width-input');
-  const resultsEl    = document.getElementById('compress-results');
+  const dropZone   = document.getElementById('img-drop-zone');
+  const input      = document.getElementById('img-input');
+  const qualSlider = document.getElementById('quality-slider');
+  const qualVal    = document.getElementById('quality-val');
+  const maxWidthIn = document.getElementById('max-width-input');
+  const resultsEl  = document.getElementById('compress-results');
 
   let currentFormat = 'jpeg';
 
-  // Format picker
-  document.querySelectorAll('.format-btn').forEach(btn => {
+  document.querySelectorAll('.fmt-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.format-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.fmt-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentFormat = btn.dataset.fmt;
     });
@@ -27,7 +25,8 @@ const Compress = (() => {
   async function compressFile(file) {
     const card = document.createElement('div');
     card.className = 'card compress-result-card';
-    card.innerHTML = `<div class="card-title">🖼️ ${escapeHtml(file.name)}</div><div style="text-align:center;padding:20px;color:var(--text-muted)">Compressing…</div>`;
+    card.style.marginBottom = '0';
+    card.innerHTML = `<div class="card-title"><i class="ph-bold ph-image"></i> ${escapeHtml(file.name)}</div><div style="text-align:center;padding:24px;color:var(--text-muted)">Compressing…</div>`;
     resultsEl.prepend(card);
 
     const form = new FormData();
@@ -38,38 +37,39 @@ const Compress = (() => {
 
     try {
       const result = await API.compress.compress(form);
-
-      const ext   = result.format;
-      const mime  = result.mimeType;
-      const src   = `data:${mime};base64,${result.data}`;
+      const ext = result.format;
+      const src = `data:${result.mimeType};base64,${result.data}`;
       const origSrc = URL.createObjectURL(file);
-      const savingsClass = result.savings >= 0 ? '' : 'warn';
-      const savingsLabel = result.savings >= 0 ? `${result.savings}% saved` : `${Math.abs(result.savings)}% larger`;
+      const savBadge = result.savings >= 0
+        ? `<span class="badge badge-green">⬇ ${result.savings}% smaller</span>`
+        : `<span class="badge badge-yellow">⬆ ${Math.abs(result.savings)}% larger</span>`;
 
       card.innerHTML = `
-        <div class="card-title">🖼️ ${escapeHtml(file.name)}</div>
+        <div class="card-title"><i class="ph-bold ph-image"></i> ${escapeHtml(file.name)}</div>
         <div class="compress-stats">
-          <span class="stat-badge ${savingsClass}">📦 ${savingsLabel}</span>
-          <span style="font-size:0.83rem;color:var(--text-muted)">${formatBytes(result.originalSize)} → ${formatBytes(result.compressedSize)}</span>
-          <span style="font-size:0.83rem;color:var(--text-muted)">${result.originalWidth}×${result.originalHeight} → ${result.outWidth}×${result.outHeight}</span>
+          ${savBadge}
+          <span style="font-size:0.84rem;color:var(--text-muted)">${formatBytes(result.originalSize)} → ${formatBytes(result.compressedSize)}</span>
+          <span style="font-size:0.84rem;color:var(--text-muted)">${result.originalWidth}×${result.originalHeight} → ${result.outWidth}×${result.outHeight}</span>
         </div>
         <div class="compress-result-grid">
           <div>
-            <div style="font-size:0.78rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px">Original</div>
+            <div style="font-size:0.75rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:7px">Original</div>
             <div class="result-img-wrap"><img src="${origSrc}" alt="original"/></div>
           </div>
           <div>
-            <div style="font-size:0.78rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px">Compressed (${ext.toUpperCase()})</div>
+            <div style="font-size:0.75rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:7px">Compressed (${ext.toUpperCase()})</div>
             <div class="result-img-wrap"><img src="${src}" alt="compressed"/></div>
           </div>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <a class="btn btn-primary" href="${src}" download="${file.name.replace(/\.[^.]+$/, '')}_compressed.${ext}">⬇️ Download compressed</a>
-          <button class="btn btn-danger btn-sm" onclick="this.closest('.compress-result-card').remove()">Remove</button>
+          <a class="btn btn-primary btn-sm" href="${src}" download="${file.name.replace(/\.[^.]+$/,'')}_compressed.${ext}">
+            <i class="ph-bold ph-download-simple"></i> Download
+          </a>
+          <button class="btn btn-ghost btn-sm" onclick="this.closest('.compress-result-card').remove()">Remove</button>
         </div>
       `;
     } catch (err) {
-      card.innerHTML = `<div class="card-title">❌ ${escapeHtml(file.name)}</div><p style="color:#dc2626">${escapeHtml(err.message)}</p>`;
+      card.innerHTML = `<div class="card-title"><i class="ph-bold ph-warning"></i> ${escapeHtml(file.name)}</div><p style="color:#dc2626">${escapeHtml(err.message)}</p>`;
     }
   }
 

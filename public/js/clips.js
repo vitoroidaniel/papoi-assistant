@@ -1,24 +1,22 @@
 /* ═══════════════════════════════════════════════════════════════
-   PAOPOI — clips.js
-   Clipboard snippets: save, copy, color-code, delete
+   PAOPOI v3 — clips.js
 ═══════════════════════════════════════════════════════════════ */
 
 const Clips = (() => {
-  let clips       = [];
+  let clips = [];
   let activeColor = 'blue';
 
-  const grid       = document.getElementById('clips-grid');
-  const newBtn     = document.getElementById('new-clip-btn');
-  const form       = document.getElementById('new-clip-form');
-  const labelIn    = document.getElementById('clip-label');
-  const textIn     = document.getElementById('clip-text');
-  const saveBtn    = document.getElementById('clip-save-btn');
-  const cancelBtn  = document.getElementById('clip-cancel-btn');
+  const grid      = document.getElementById('clips-grid');
+  const newBtn    = document.getElementById('new-clip-btn');
+  const form      = document.getElementById('new-clip-form');
+  const labelIn   = document.getElementById('clip-label');
+  const textIn    = document.getElementById('clip-text');
+  const saveBtn   = document.getElementById('clip-save-btn');
+  const cancelBtn = document.getElementById('clip-cancel-btn');
 
-  // Color selector
-  document.querySelectorAll('.clip-color-btn').forEach(btn => {
+  document.querySelectorAll('.cc-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.clip-color-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.cc-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       activeColor = btn.dataset.color;
     });
@@ -26,10 +24,9 @@ const Clips = (() => {
 
   function render() {
     if (!clips.length) {
-      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📋</div><p>No snippets yet. Save frequently-used text here.</p></div>`;
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i class="ph-bold ph-clipboard"></i><p>No snippets yet. Save frequently-used text here.</p></div>`;
       return;
     }
-
     grid.innerHTML = clips.map(c => `
       <div class="clip-card" data-id="${c.id}" data-color="${c.color}">
         <span class="clip-copied-badge">✓ Copied!</span>
@@ -37,12 +34,13 @@ const Clips = (() => {
         <div class="clip-text">${escapeHtml(c.text)}</div>
         <div class="clip-footer">
           <span class="clip-date">${formatDateTime(c.createdAt)}</span>
-          <button class="btn btn-danger btn-sm" data-del="${c.id}" onclick="event.stopPropagation()">🗑️</button>
+          <button class="btn btn-ghost-red btn-sm" data-del="${c.id}" onclick="event.stopPropagation()">
+            <i class="ph-bold ph-trash"></i>
+          </button>
         </div>
       </div>
     `).join('');
 
-    // Click card → copy to clipboard
     grid.querySelectorAll('.clip-card').forEach(card => {
       card.addEventListener('click', async () => {
         const clip = clips.find(c => c.id === card.dataset.id);
@@ -50,11 +48,9 @@ const Clips = (() => {
         try {
           await navigator.clipboard.writeText(clip.text);
           card.classList.add('copied');
-          setTimeout(() => card.classList.remove('copied'), 1600);
+          setTimeout(() => card.classList.remove('copied'), 1500);
           toast('Copied to clipboard!', 'success');
-        } catch {
-          toast('Copy failed — try clicking again.', 'error');
-        }
+        } catch { toast('Copy failed.', 'error'); }
       });
     });
 
@@ -70,8 +66,7 @@ const Clips = (() => {
       const clip = await API.clips.create({ label: labelIn.value.trim(), text, color: activeColor });
       clips.unshift(clip);
       render();
-      labelIn.value = '';
-      textIn.value  = '';
+      labelIn.value = ''; textIn.value = '';
       form.style.display = 'none';
       toast('Snippet saved!', 'success');
     } catch (err) { toast(err.message, 'error'); }
@@ -94,10 +89,8 @@ const Clips = (() => {
   saveBtn.addEventListener('click', save);
 
   async function init() {
-    try {
-      clips = await API.clips.list();
-      render();
-    } catch (err) { toast('Failed to load snippets.', 'error'); }
+    try { clips = await API.clips.list(); render(); }
+    catch { toast('Failed to load snippets.', 'error'); }
   }
 
   return { init };
