@@ -384,7 +384,7 @@ hr.div { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
       Built for dispatchers &amp; brokers
     </div>
     <h1>Your <span class="ac">AI co-pilot</span><br>for freight <span class="ac2">comms</span></h1>
-    <p class="hero-sub">Write load offers, rephrase messages, adjust tone, and translate — all in seconds. Powered by Claude AI.</p>
+    <p class="hero-sub">Write load offers, rephrase messages, adjust tone, and translate — all in seconds. Powered by Groq AI.</p>
     <div class="hero-actions">
       <button class="btn-hero btn-hero-primary" onclick="launchApp()">
         <i data-lucide="zap" style="width:16px;height:16px;"></i>
@@ -438,7 +438,7 @@ hr.div { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
 
   <div class="api-bar">
     <label><i data-lucide="key" style="width:13px;height:13px;"></i> API Key</label>
-    <input type="password" id="api-key-input" placeholder="sk-ant-api03-..." oninput="checkKey()">
+    <input type="password" id="api-key-input" placeholder="gsk_..." oninput="checkKey()">
     <div id="api-status" class="api-status">Not set</div>
   </div>
 
@@ -468,7 +468,7 @@ hr.div { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
       </button>
       <div class="sb-footer">
         <i data-lucide="zap" style="width:13px;height:13px;color:var(--blue);"></i>
-        Powered by Claude AI
+        Powered by Groq AI
       </div>
     </aside>
 
@@ -645,7 +645,7 @@ function checkKey() {
   API_KEY = k;
   const s = document.getElementById('api-status');
   if (!k) { s.textContent = 'Not set'; s.className = 'api-status'; }
-  else if (k.startsWith('sk-ant-')) { s.textContent = 'Ready'; s.className = 'api-status ok'; }
+  else if (k.startsWith('gsk_')) { s.textContent = 'Ready'; s.className = 'api-status ok'; }
   else { s.textContent = 'Check format'; s.className = 'api-status err'; }
 }
 
@@ -684,19 +684,17 @@ async function callAPI(prompt, resultId) {
   if (!API_KEY) { alert('Please enter your Claude API key at the top.'); return; }
   setRes(resultId, 'Papoi is thinking...', 'loading');
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
+        'Authorization': 'Bearer ' + API_KEY
       },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: SYS, messages: [{ role: 'user', content: prompt }] })
+      body: JSON.stringify({ model: 'llama-3.3-70b-versatile', max_tokens: 1000, messages: [{ role: 'system', content: SYS }, { role: 'user', content: prompt }] })
     });
     const data = await res.json();
-    if (data.error) throw new Error(data.error.message);
-    setRes(resultId, (data.content||[]).map(b=>b.text||'').join(''), '');
+    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+    setRes(resultId, data.choices?.[0]?.message?.content || '', '');
   } catch(e) { setRes(resultId, 'Error: ' + e.message, 'loading'); }
 }
 
@@ -777,14 +775,14 @@ async function sendChat() {
   chatHistory.push({ role: 'user', content: msg });
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: SYS, messages: chatHistory })
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + API_KEY },
+      body: JSON.stringify({ model: 'llama-3.3-70b-versatile', max_tokens: 1000, messages: [{ role: 'system', content: SYS }, ...chatHistory] })
     });
     const data = await res.json();
-    if (data.error) throw new Error(data.error.message);
-    const text = (data.content||[]).map(b=>b.text||'').join('');
+    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+    const text = data.choices?.[0]?.message?.content || '';
     aEl.querySelector('.msg-bubble').textContent = text;
     aEl.classList.remove('loading');
     chatHistory.push({ role: 'assistant', content: text });
