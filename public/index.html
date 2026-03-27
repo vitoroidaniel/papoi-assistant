@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paopoi 🍌</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍌</text></svg>" />
+
+  <!-- Fonts: Syne (display) + DM Sans (body) + DM Mono (code) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+
+  <!-- Lucide icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/tabs.css" />
+</head>
+<body>
+
+  <!-- ══ WELCOME SCREEN ══════════════════════════════════════════ -->
+  <div id="welcome">
+    <div class="welcome-inner">
+      <div class="welcome-img-wrap">
+        <img
+          src="https://images.unsplash.com/photo-1559181567-c3190ca9959b?w=340&q=90&fit=crop&crop=center"
+          alt="Minion"
+          class="welcome-minion-img"
+          onerror="this.style.display='none';document.getElementById('welcome-fallback').style.display='flex'"
+        />
+        <div id="welcome-fallback" class="welcome-fallback" style="display:none">🍌</div>
+      </div>
+      <div class="welcome-text">
+        <h1 class="welcome-title">Paopoi</h1>
+        <p class="welcome-sub">Bello! Your personal AI workspace.</p>
+        <div class="welcome-pills">
+          <span>🤖 AI Chat</span>
+          <span>📝 Notes</span>
+          <span>🖼️ Compress</span>
+          <span>📄 PDF Rename</span>
+        </div>
+      </div>
+      <div class="welcome-dots">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ APP SHELL ════════════════════════════════════════════════ -->
+  <div id="app">
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <img
+          src="https://images.unsplash.com/photo-1559181567-c3190ca9959b?w=80&q=80&fit=crop&crop=faces"
+          alt="Paopoi"
+          class="sidebar-minion-img"
+          onerror="this.outerHTML='<span style=\'font-size:1.4rem\'>🍌</span>'"
+        />
+      </div>
+
+      <button class="nav-item active" data-tab="chat">
+        <i data-lucide="bot" class="nav-icon"></i>
+        <span class="nav-label">AI Chat</span>
+      </button>
+      <button class="nav-item" data-tab="notes">
+        <i data-lucide="notebook-pen" class="nav-icon"></i>
+        <span class="nav-label">Notes</span>
+      </button>
+      <button class="nav-item" data-tab="files">
+        <i data-lucide="folder-open" class="nav-icon"></i>
+        <span class="nav-label">Files</span>
+      </button>
+      <button class="nav-item" data-tab="compress">
+        <i data-lucide="image-down" class="nav-icon"></i>
+        <span class="nav-label">Compress</span>
+      </button>
+      <button class="nav-item" data-tab="pdfs">
+        <i data-lucide="file-text" class="nav-icon"></i>
+        <span class="nav-label">PDF Renamer</span>
+      </button>
+      <button class="nav-item" data-tab="clips">
+        <i data-lucide="clipboard-list" class="nav-icon"></i>
+        <span class="nav-label">Snippets</span>
+      </button>
+
+      <div class="sidebar-spacer"></div>
+
+      <button class="nav-item" data-tab="settings">
+        <i data-lucide="settings-2" class="nav-icon"></i>
+        <span class="nav-label">Settings</span>
+      </button>
+    </nav>
+
+    <!-- Main content -->
+    <main class="main">
+
+      <!-- ── CHAT ──────────────────────────────────────────── -->
+      <section id="tab-chat" class="tab-panel active">
+        <div class="page-header">
+          <h1 class="page-title"><i data-lucide="bot"></i> AI Chat</h1>
+          <button class="btn btn-ghost btn-sm" id="chat-clear-btn">
+            <i data-lucide="trash-2"></i> Clear
+          </button>
+        </div>
+        <div class="card chat-card">
+          <div class="chat-messages" id="chat-messages">
+            <div class="msg ai">
+              <div class="msg-avatar"><i data-lucide="sparkles"></i></div>
+              <div class="msg-bubble">
+                <strong>Bello!</strong> I'm Paopoi, your AI assistant. How can I help?<br/>
+                <small style="opacity:0.55;font-size:0.8rem">Powered by Grok — add your API key in Settings first.</small>
+              </div>
+            </div>
+          </div>
+          <div class="chat-input-bar">
+            <textarea id="chat-input" placeholder="Ask anything… (Enter to send, Shift+Enter for newline)" rows="1"></textarea>
+            <button class="btn btn-primary icon-btn" id="chat-send-btn">
+              <i data-lucide="send-horizontal"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── NOTES ─────────────────────────────────────────── -->
+      <section id="tab-notes" class="tab-panel">
+        <div class="page-header">
+          <h1 class="page-title"><i data-lucide="notebook-pen"></i> Notes</h1>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div class="sub-tabs">
+              <button class="sub-tab active" data-subtab="notes-list">Notes</button>
+              <button class="sub-tab" data-subtab="templates-list">Templates</button>
+            </div>
+            <button class="btn btn-primary btn-sm" id="new-note-btn">
+              <i data-lucide="plus"></i> New Note
+            </button>
+          </div>
+        </div>
+
+        <div id="notes-list" class="subtab-panel active">
+          <div class="notes-layout">
+            <div class="notes-sidebar">
+              <div class="search-wrap">
+                <i data-lucide="search" class="search-icon"></i>
+                <input type="text" id="notes-search" placeholder="Search notes…" class="search-input"/>
+              </div>
+              <div class="note-list" id="note-list"></div>
+            </div>
+            <div class="card note-editor-card" id="note-editor-card">
+              <div id="note-placeholder" class="note-placeholder">
+                <i data-lucide="notebook" style="width:48px;height:48px;opacity:0.2"></i>
+                <p>Select a note or create a new one</p>
+              </div>
+              <div id="note-form" style="display:none;height:100%;flex-direction:column;gap:12px">
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                  <input type="text" id="note-title-input" placeholder="Note title…" style="font-weight:700;font-size:1.05rem;flex:1"/>
+                  <div class="color-picker-row" id="note-colors"></div>
+                  <button class="btn btn-primary btn-sm" id="note-save-btn"><i data-lucide="save"></i> Save</button>
+                  <button class="btn btn-ghost-danger btn-sm" id="note-delete-btn"><i data-lucide="trash-2"></i></button>
+                </div>
+                <textarea id="note-content-input" placeholder="Write your note here…" style="flex:1;min-height:380px"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="templates-list" class="subtab-panel">
+          <div style="display:flex;gap:16px;flex-wrap:wrap">
+            <div class="card" style="flex:1;min-width:300px">
+              <div class="card-title"><i data-lucide="layout-template"></i> New Template</div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <input type="text" id="tmpl-name" placeholder="Template name…" />
+                <select id="tmpl-category">
+                  <option>General</option><option>Email</option><option>Meeting</option>
+                  <option>Report</option><option>Code</option><option>Other</option>
+                </select>
+                <textarea id="tmpl-content" placeholder="Template content…" style="min-height:200px"></textarea>
+                <button class="btn btn-primary" id="tmpl-save-btn"><i data-lucide="save"></i> Save Template</button>
+              </div>
+            </div>
+            <div class="card" style="flex:2;min-width:300px">
+              <div class="card-title"><i data-lucide="library"></i> Saved Templates</div>
+              <div class="file-list" id="template-list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── FILES ─────────────────────────────────────────── -->
+      <section id="tab-files" class="tab-panel">
+        <div class="page-header">
+          <h1 class="page-title"><i data-lucide="folder-open"></i> File Library</h1>
+        </div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+          <div class="card" style="flex:1;min-width:280px">
+            <div class="card-title"><i data-lucide="upload-cloud"></i> Upload File</div>
+            <div class="drop-zone" id="file-drop-zone">
+              <i data-lucide="file-up" style="width:40px;height:40px;opacity:0.35;margin-bottom:10px"></i>
+              <p style="font-weight:600;font-size:0.97rem">Drop files here or click to browse</p>
+              <p style="font-size:0.8rem;color:var(--text-muted);margin-top:5px">.txt .md .csv .json .xml .log .yaml</p>
+              <input type="file" id="file-input" style="display:none" accept=".txt,.md,.csv,.json,.xml,.log,.yaml,.yml" multiple/>
+            </div>
+          </div>
+          <div class="card" style="flex:2;min-width:300px">
+            <div class="card-title"><i data-lucide="files"></i> Saved Files</div>
+            <div class="file-list" id="file-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── COMPRESS ──────────────────────────────────────── -->
+      <section id="tab-compress" class="tab-panel">
+        <div class="page-header">
+          <h1 class="page-title"><i data-lucide="image-down"></i> Image Compressor</h1>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card">
+            <div class="drop-zone" id="img-drop-zone">
+              <i data-lucide="image" style="width:44px;height:44px;opacity:0.3;margin-bottom:10px"></i>
+              <p style="font-weight:600;font-size:0.97rem">Drop image here or click to browse</p>
+              <p style="font-size:0.8rem;color:var(--text-muted);margin-top:5px">JPG, PNG, WebP — max 25 MB — batch supported</p>
+              <input type="file" id="img-input" style="display:none" accept="image/jpeg,image/png,image/webp" multiple/>
+            </div>
+            <div class="compress-controls" style="margin-top:20px">
+              <div class="control-group">
+                <label>Format</label>
+                <div style="display:flex;gap:6px" id="format-picker">
+                  <button class="btn btn-ghost btn-sm format-btn active" data-fmt="jpeg">JPEG</button>
+                  <button class="btn btn-ghost btn-sm format-btn" data-fmt="webp">WebP</button>
+                  <button class="btn btn-ghost btn-sm format-btn" data-fmt="png">PNG</button>
+                </div>
+              </div>
+              <div class="control-group" style="flex:1">
+                <label>Quality — <strong id="quality-val">80</strong>%</label>
+                <input type="range" id="quality-slider" min="10" max="100" value="80" />
+              </div>
+              <div class="control-group">
+                <label>Max width px (0 = original)</label>
+                <input type="text" id="max-width-input" value="0" style="width:90px" />
+              </div>
+            </div>
+          </div>
+          <div id="compress-results"></div>
+        </div>
+      </section>
+
+      <!-- ── PDF RENAMER ────────────────────────────────────── -->
+      <section id="tab-pdfs" class="tab-panel">
+        <div class="page-header">
+          <h1 class="page-title"><i data-lucide="file-text"></i> PDF Renamer</h1>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost btn-sm" id="pdf-pattern-btn"><i data-lucide="list-ordered"></i> Bulk pattern</button>
+            <button class="btn btn-primary btn-sm" id="pdf-download-all-btn"><i data-lucide="download"></i> Download all</button>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="drop-zone" id="pdf-drop-zone">
+            <i data-lucide="file-text" style="width:44px;height:44px;opacity:0.3;margin-bottom:10px"></i>
+            <p style="font-weight:600;font-size:0.97rem">Drop PDF files here or click to browse</p>
+            <p style="font-size:0.8rem;color:var(--text-muted);margin-top:5px">Multiple files — max 50 MB each</p>
+            <input type="file" id="pdf-input" style="display:none" accept=".pdf" multiple/>
+          </div>
+        </div>
+        <div class="card" id="pdf-pattern-panel" style="display:none;margin-bottom:16px">
+          <div class="card-title"><i data-lucide="list-ordered"></i> Bulk Rename Pattern</div>
+          <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+            <div class="control-group" style="flex:1"><label>Prefix</label><input type="text" id="pattern-prefix" placeholder="e.g. Report_" /></div>
+            <div class="control-group"><label>Start #</label><input type="text" id="pattern-start" value="1" style="width:70px" /></div>
+            <div class="control-group"><label>Padding</label><input type="text" id="pattern-pad" value="3" style="width:70px" /></div>
+            <div class="control-group"><label>Suffix</label><input type="text" id="pattern-suffix" placeholder="e.g. _2024" /></div>
+            <button class="btn btn-primary" id="pattern-apply-btn"><i data-lucide="check"></i> Apply</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><i data-lucide="files"></i> Uploaded PDFs</div>
+          <div class="pdf-list" id="pdf-list"></div>
+        </div>
+      </section>
+
+      <!-- ── SNIPPETS ───────────────────────────────────────── -->
+      <section id="tab-clips" class="tab-panel">
+        <div class="page-header">
+          <h1 class="page-title"><i data-lucide="clipboard-list"></i> Snippets</h1>
+          <button class="btn btn-primary" id="new-clip-btn"><i data-lucide="plus"></i> New Snippet</button>
+        </div>
+        <div id="new-clip-form" class="card" style="display:none;margin-bottom:16px">
+          <div class="card-title"><i data-lucide="pencil"></i> New Snippet</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+            <input type="text" id="clip-label" placeholder="Label (optional)" style="width:220px"/>
+            <div style="display:flex;gap:6px" id="clip-colors">
+              <button class="clip-color-btn active" data-color="blue"   style="background:#dbeafe;border-color:#93c5fd">Blue</button>
+              <button class="clip-color-btn"        data-color="green"  style="background:#dcfce7;border-color:#86efac">Green</button>
+              <button class="clip-color-btn"        data-color="yellow" style="background:#fef9c3;border-color:#fde047">Yellow</button>
+              <button class="clip-color-btn"        data-color="red"    style="background:#fee2e2;border-color:#fca5a5">Red</button>
+              <button class="clip-color-btn"        data-color="purple" style="background:#f3e8ff;border-color:#d8b4fe">Purple</button>
+            </div>
+          </div>
+          <textarea id="clip-text" placeholder="Paste or type your snippet…" style="min-height:110px"></textarea>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="btn btn-primary" id="clip-save-btn"><i data-lucide="save"></i> Save</button>
+            <button class="btn btn-ghost" id="clip-cancel-btn">Cancel</button>
+          </div>
+        </div>
+        <div class="clips-grid" id="clips-grid"></div>
+      </section>
+
+      <!-- ── SETTINGS ───────────────────────────────────────── -->
+      <section id="tab-settings" class="tab-panel">
+        <div class="page-header">
+          <h1 class="page-title"><i data-lucide="settings-2"></i> Settings</h1>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px;max-width:600px">
+          <div class="card">
+            <div class="card-title"><i data-lucide="key-round"></i> API Keys</div>
+            <div class="setting-group">
+              <label>Grok API Key</label>
+              <div style="display:flex;gap:8px">
+                <input type="password" id="grok-key-input" placeholder="xai-…" autocomplete="off"/>
+                <button class="btn btn-primary" id="grok-key-save-btn"><i data-lucide="save"></i> Save</button>
+              </div>
+              <p id="grok-key-status" style="font-size:0.82rem;margin-top:7px;color:var(--text-muted)">
+                Get your key at <a href="https://console.x.ai" target="_blank" style="color:var(--accent2)">console.x.ai</a>
+              </p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i data-lucide="palette"></i> Accent Color</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap" id="accent-picker">
+              <button class="accent-btn active" data-color="#fbbf24" style="background:#fbbf24" title="Yellow"></button>
+              <button class="accent-btn" data-color="#60a5fa" style="background:#60a5fa" title="Blue"></button>
+              <button class="accent-btn" data-color="#34d399" style="background:#34d399" title="Green"></button>
+              <button class="accent-btn" data-color="#f87171" style="background:#f87171" title="Red"></button>
+              <button class="accent-btn" data-color="#a78bfa" style="background:#a78bfa" title="Purple"></button>
+              <button class="accent-btn" data-color="#fb923c" style="background:#fb923c" title="Orange"></button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i data-lucide="info"></i> About Paopoi</div>
+            <p style="font-size:0.9rem;line-height:1.75;color:var(--text-muted)">
+              <strong style="color:var(--text)">Paopoi</strong> — personal AI workspace.<br/>
+              AI Chat · Notes &amp; Templates · File Library · Image Compressor · PDF Renamer · Snippets<br/><br/>
+              Node.js + Express · Grok AI · Liquid glass design
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <div id="toast-container"></div>
+  <div id="modal-overlay" class="modal-overlay" style="display:none">
+    <div class="modal-box">
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-body"  id="modal-body"></div>
+      <div class="modal-footer" id="modal-footer"></div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/chat.js"></script>
+  <script src="/js/notes.js"></script>
+  <script src="/js/files.js"></script>
+  <script src="/js/compress.js"></script>
+  <script src="/js/pdfs.js"></script>
+  <script src="/js/clips.js"></script>
+  <script src="/js/settings.js"></script>
+  <script src="/js/app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>
